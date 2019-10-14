@@ -21,11 +21,11 @@ USE `projeto_dados` ;
 -- Table `projeto_dados`.`user`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `projeto_dados`.`user` (
-  `iduser` INT NOT NULL,
-  `nome` VARCHAR(45) NULL,
-  `sobrenome` VARCHAR(45) NULL,
-  `email` VARCHAR(45) NULL,
-  `cidade_idcidade` INT NULL,
+  `iduser` INT NOT NULL AUTO_INCREMENT,
+  `nome` VARCHAR(45) NOT NULL ,
+  `sobrenome` VARCHAR(45) NOT NULL,
+  `email` VARCHAR(45) NULL UNIQUE,
+  `cidade_idcidade` INT NOT NULL,
   PRIMARY KEY (`iduser`))
 ENGINE = InnoDB;
 
@@ -34,7 +34,7 @@ ENGINE = InnoDB;
 -- Table `projeto_dados`.`post`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `projeto_dados`.`post` (
-  `idpost` INT NOT NULL,
+  `idpost` INT NOT NULL AUTO_INCREMENT,
   `user_iduser_p` INT NULL,
   `titulo` VARCHAR(45) NULL,
   `texto` VARCHAR(45) NULL,
@@ -54,7 +54,7 @@ ENGINE = InnoDB;
 -- Table `projeto_dados`.`passaro`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `projeto_dados`.`passaro` (
-  `idpassaro` INT NOT NULL,
+  `idpassaro` INT NOT NULL AUTO_INCREMENT,
   `especie` VARCHAR(45) NULL,
   PRIMARY KEY (`idpassaro`))
 ENGINE = InnoDB;
@@ -135,7 +135,7 @@ ENGINE = InnoDB;
 -- Table `projeto_dados`.`cidade`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `projeto_dados`.`cidade` (
-  `idcidade` INT NOT NULL,
+  `idcidade` INT NOT NULL AUTO_INCREMENT,
   `nome` VARCHAR(45) NULL,
   PRIMARY KEY (`idcidade`))
 ENGINE = InnoDB;
@@ -146,7 +146,7 @@ ENGINE = InnoDB;
 -- Table `projeto_dados`.`log`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `projeto_dados`.`log` (
-  `idlog` INT NOT NULL,
+  `idlog` INT NOT NULL AUTO_INCREMENT,
   `user_iduser_l` INT NULL,
   `os` VARCHAR(45) NULL,
   `browser` VARCHAR(45) NULL,
