@@ -1,0 +1,7 @@
+{
+    "MYSQL": "/usr/bin/mysql",
+    "HOST": "172.17.0.2",
+    "USER": "root",
+    "PASS": "123",
+    "LOGFILE": "log.txt"
+}
