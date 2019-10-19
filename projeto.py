@@ -73,7 +73,10 @@ def acha_cidade(connection,idcidade):
     c = cur.fetchall()
 
     for i in c:
-        return i[0]
+        return i[1]
+
+
+
 
 
 def adiciona_post(connection,post):
@@ -105,16 +108,5 @@ def adiciona_passaro(conn, passaro):
             cursor.execute('INSERT INTO passaro (especie) VALUES (%s)', (passaro['especie']))
         except pymysql.err.IntegrityError as e:
             raise ValueError(f'Não posso inserir {passaro["especie"]} na tabela user')
-
-
-
-def get_cidade(conn,idcidade):
-    with conn.cursor() as cursor:
-        cursor.execute('SELECT idcidade FROM cidade WHERE nome = %s AND sobrenome = %s', (nome, sobrenome))
-        res = cursor.fetchone()
-        if res:
-            return res[0]
-        else:
-            return None
 
 
