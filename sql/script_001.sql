@@ -39,7 +39,7 @@ CREATE TABLE IF NOT EXISTS `projeto_dados`.`post` (
   `titulo` VARCHAR(45) NULL,
   `texto` VARCHAR(45) NULL,
   `url` VARCHAR(45) NULL,
-  `is_active` INT NULL,
+  `is_active` INT NULL DEFAULT '1',
   PRIMARY KEY (`idpost`),
   INDEX `iduser_idx` (`user_iduser_p` ASC),
   CONSTRAINT `iduser`
