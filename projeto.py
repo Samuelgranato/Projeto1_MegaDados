@@ -108,12 +108,12 @@ def gera_log(connection,log):
     cur = connection.cursor()
     cur.execute("INSERT INTO log (user_iduser_l,os,browser,ip,criado_ts) VALUES (%s,%s,%s,%s,%s)",(log["user_iduser_l"],log["os"],log["browser"],log["ip"],log["criado_ts"])) 
 
-def adiciona_passaro(conn, passaro):
+def adiciona_passaro(conn, especie):
     with conn.cursor() as cursor:
         try:
-            cursor.execute('INSERT INTO passaro (especie) VALUES (%s)', (passaro['especie']))
+            cursor.execute('INSERT INTO passaro (especie) VALUES (%s)', (especie))
         except pymysql.err.IntegrityError as e:
-            raise ValueError(f'Não posso inserir {passaro["especie"]} na tabela user')
+            raise ValueError(f'Não posso inserir {especie} na tabela user')
 
 def acha_passaro(conn, especie):
     with conn.cursor() as cursor:
@@ -126,9 +126,26 @@ def acha_passaro(conn, especie):
 
 def acha_post(connection,post):
     cur = connection.cursor()
-    cur.execute("SELECT * FROM post WHERE user_iduser_p = %s AND titulo = %s AND texto = %s AND url = %s ",(post['user_iduser_p'],post['titulo'],post['texto'],post['url']))
+    cur.execute("SELECT * FROM post WHERE user_iduser_p = %s AND titulo = %s",(post['user_iduser_p'],post['titulo']))
      
     c = cur.fetchall()
 
     for i in c:
         return i[0]
+
+def lista_posts(connection):
+    cur = connection.cursor()
+    cur.execute("SELECT * FROM post")
+     
+    c = cur.fetchall()
+
+    return c
+
+def lista_passaros(connection):
+    cur = connection.cursor()
+    cur.execute("SELECT * FROM passaros")
+
+    c = cur.fetchall()
+
+    return c
+
