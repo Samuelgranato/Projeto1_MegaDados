@@ -50,11 +50,11 @@ def cria_tudo():
 
 
 def adiciona_usuario(conn, usuario):
-    with conn.cursor() as cursor:
-        try:
-            cursor.execute('INSERT INTO user (login, nome, sobrenome, email, cidade_idcidade) VALUES (%s, %s, %s, %s, %s)', (usuario['login'],usuario['nome'], usuario['sobrenome'], usuario['email'], usuario['cidade_idcidade']))
-        except pymysql.err.IntegrityError as e:
-            raise ValueError(f'Não posso inserir {usuario["nome"]} na tabela user')
+    cursor = conn.cursor()
+    try:
+        cursor.execute('INSERT INTO user (login, nome, sobrenome, email, cidade_idcidade) VALUES (%s, %s, %s, %s, %s)', (usuario['login'],usuario['nome'], usuario['sobrenome'], usuario['email'], usuario['cidade_idcidade']))
+    except pymysql.err.IntegrityError as e:
+        raise ValueError(f'Não posso inserir {usuario["nome"]} na tabela user')
 
 def acha_usuario_login(conn, login):
     with conn.cursor() as cursor:
@@ -66,13 +66,13 @@ def acha_usuario_login(conn, login):
             return None
 
 def acha_usuario_nome(conn, nome, sobrenome):
-    with conn.cursor() as cursor:
-        cursor.execute('SELECT * FROM perigo WHERE nome = %s AND sobrenome = %s', (nome, sobrenome))
-        res = cursor.fetchone()
-        if res:
-            return res
-        else:
-            return None
+    cursor = conn.cursor()
+    cursor.execute('SELECT * FROM user WHERE nome = %s AND sobrenome = %s', (nome, sobrenome))
+    res = cursor.fetchone()
+    if res:
+        return res
+    else:
+        return None
 
 def adiciona_cidade(connection,nome):
     cur = connection.cursor()
@@ -101,7 +101,7 @@ def ativa_post(connection,idpost):
     cur.execute("UPDATE post SET is_active=1 WHERE idpost = %s",(idpost))
 
 def lista_usuarios(conn):
-    with conn.cursor() as cursor:
+    cur = connection.cursor()
         cursor.execute('SELECT id from user')
         res = cursor.fetchall()
         users = tuple(x[0] for x in res)
@@ -112,14 +112,14 @@ def gera_log(connection,log):
     cur.execute("INSERT INTO log (user_iduser_l,os,browser,ip,criado_ts) VALUES (%s,%s,%s,%s,%s)",(log["user_iduser_l"],log["os"],log["browser"],log["ip"],log["criado_ts"])) 
 
 def adiciona_passaro(conn, especie):
-    with conn.cursor() as cursor:
+    cur = connection.cursor()
         try:
             cursor.execute('INSERT INTO passaro (especie) VALUES (%s)', (especie))
         except pymysql.err.IntegrityError as e:
             raise ValueError(f'Não posso inserir {especie} na tabela user')
 
 def acha_passaro(conn, especie):
-    with conn.cursor() as cursor:
+    cur = connection.cursor()
         cursor.execute('SELECT * FROM passaro WHERE especie = %s ', (especie))
         res = cursor.fetchone()
         if res:
@@ -158,3 +158,10 @@ def atualiza_preferencia(connection, preferencia, usuario_id, passaro_id):
     cur.execute("UPDATE user_has_passaro SET gosta = %s WHERE user_iduser_hp = %s AND passaro_idpassado_hp = %s", (preferencia, usuario_id, passaro_id))
     cur.close()
     
+def os_popular(connection):
+    cur = connection.cursor()
+    cur.execute("SELECT os, count(os) as total FROM logs GROUP BY os")
+    resultado = cur.fetchall()
+    cur.close()
+
+    return resultado
