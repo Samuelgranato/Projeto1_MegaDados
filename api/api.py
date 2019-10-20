@@ -1,8 +1,9 @@
-from projeto import *
 from fastapi import FastAPI, HTTPException
 import logging
 import pymysql
+from starlette.requests import Request
 import os
+import datetime
 
 from connection import *
 os.chdir('../')
@@ -16,10 +17,26 @@ app = FastAPI()
 
 
 @app.get("/")
-def read_root():
-    if 1 == 1:
-        raise HTTPException(status_code=404, detail="Erro na operacao")
-    return "teste"
+def read_root(req : Request):
+    
+    #     raise HTTPException(status_code=404, detail="Erro na operacao")
+    infos = vars(req.headers)['_list']
+   
+    request_infos = {}
+    for i in infos:
+        key = i[0].decode('ASCII')
+        value = i[1].decode('ASCII')
+
+        request_infos[key] = value
+
+    OS = request_infos['user-agent'].split(" ")[2]
+    
+    useful_info = {'host': request_infos['host'], 
+                   'browser': request_infos['user-agent'], 
+                   'OS' : OS, 
+                   'criado_ts': datetime.datetime.now()}
+    
+    return useful_info
 
 
 @app.get("/usuario")  # Procura usuario por nome e sobrenomes
@@ -47,12 +64,31 @@ def cria_usuario(usuario: Usuario):
 
 
 @app.get("/posts")
-def acha_posts(post: Post_Acha):
+def acha_posts(post: Post_Acha, req: Request):
     post_find = {
         'user_iduser': post.iduser,
         'titulo': post.titulo
     }
     resultado = acha_post(connection, post_find)
+
+    infos = vars(req.headers)['_list']
+   
+    request_infos = {}
+    for i in infos:
+        key = i[0].decode('ASCII')
+        value = i[1].decode('ASCII')
+
+        request_infos[key] = value
+    
+    OS = request_infos['user-agent'].split(" ")[2]
+    
+    useful_info = {'host': request_infos['host'], 
+                   'browser': request_infos['user-agent'], 
+                   'OS' : OS, 
+                   'criado_ts': datetime.datetime.now()}
+    
+    gera_log(useful_info)
+
     return resultado
 
 
