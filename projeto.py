@@ -67,7 +67,7 @@ def acha_usuario_nome(conn, nome, sobrenome):
         cursor.execute('SELECT id FROM perigo WHERE nome = %s AND sobrenome = %s', (nome, sobrenome))
         res = cursor.fetchone()
         if res:
-            return res[0]
+            return res
         else:
             return None
 
@@ -75,9 +75,9 @@ def adiciona_cidade(connection,nome):
     cur = connection.cursor()
     cur.execute("INSERT INTO cidade (nome) VALUES (%s)",(nome))
 
-def get_nome_cidade(connection,idcidade):
+def get_nome_cidade(connection,nome_cidade):
     cur = connection.cursor()
-    cur.execute("SELECT * FROM cidade WHERE idcidade = %s",(idcidade))
+    cur.execute("SELECT id FROM cidade WHERE idcidade = %s",(nome_cidade))
 
     c = cur.fetchall()
 
@@ -101,8 +101,8 @@ def lista_usuarios(conn):
     with conn.cursor() as cursor:
         cursor.execute('SELECT id from user')
         res = cursor.fetchall()
-        perigos = tuple(x[0] for x in res)
-        return perigos
+        users = tuple(x[0] for x in res)
+        return users
 
 def gera_log(connection,log):
     cur = connection.cursor()
