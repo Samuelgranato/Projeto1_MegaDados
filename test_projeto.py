@@ -40,6 +40,7 @@ class TestProjeto(unittest.TestCase):
 
         usuario = {
             'nome':'vinicius',
+            'login': 'vinigl',
             'sobrenome':'lima',
             'email':'viniciusgl1@al.insper.edu.br',
             'cidade_idcidade':'1'
@@ -85,7 +86,7 @@ def tearDownModule():
 
 if __name__ == '__main__':
     global config
-    with open('config_tests.json', 'r') as f:
+    with open('config_tests_samuel.json', 'r') as f:
         config = json.load(f)
     logging.basicConfig(filename=config['LOGFILE'], level=logging.DEBUG)
     unittest.main(verbosity=2)
