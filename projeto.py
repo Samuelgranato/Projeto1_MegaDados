@@ -64,7 +64,7 @@ def acha_usuario_login(conn, login):
 
 def acha_usuario_nome(conn, nome, sobrenome):
     with conn.cursor() as cursor:
-        cursor.execute('SELECT id FROM perigo WHERE nome = %s AND sobrenome = %s', (nome, sobrenome))
+        cursor.execute('SELECT * FROM perigo WHERE nome = %s AND sobrenome = %s', (nome, sobrenome))
         res = cursor.fetchone()
         if res:
             return res
@@ -149,3 +149,9 @@ def lista_passaros(connection):
 
     return c
 
+
+def atualiza_preferencia(connection, preferencia, usuario_id, passaro_id):
+    cur = connection.cursor()
+    cur.execute("UPDATE user_has_passaro SET gosta = %s WHERE user_iduser_hp = %s AND passaro_idpassado_hp = %s", (preferencia, usuario_id, passaro_id))
+    cur.close()
+    

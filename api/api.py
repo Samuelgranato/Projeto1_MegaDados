@@ -47,7 +47,6 @@ def acha_usuario(usuario: Usuario):
 
 @app.post("/usuario")  # Insere usuario
 def cria_usuario(usuario: Usuario):
-    cursor = connection.cursor()
     nome_cidade = usuario.cidade.capitalize()
     id_cidade = get_nome_cidade(connection, nome_cidade)
 
@@ -61,6 +60,14 @@ def cria_usuario(usuario: Usuario):
 
     adiciona_usuario(connection, usuario_add)
     return "Sucesso"
+
+@app.post("/preferencia")
+def cria_preferencia(preferencia: Preferencia):
+    
+    atualiza_preferencia(connection, 
+                         preferencia.gosta,
+                         preferencia.userid,
+                         preferencia.passaroid)
 
 
 @app.get("/posts")
@@ -87,7 +94,7 @@ def acha_posts(post: Post_Acha, req: Request):
                    'OS' : OS, 
                    'criado_ts': datetime.datetime.now()}
     
-    gera_log(useful_info)
+    gera_log(connection, useful_info)
 
     return resultado
 

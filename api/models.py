@@ -30,3 +30,8 @@ class Post_Atualiza(BaseModel):
 
 class Passaro(BaseModel):
     especie: str
+
+class Preferencia(BaseModel):
+    gosta: int
+    userid: int
+    passaroid: int
