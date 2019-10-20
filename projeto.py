@@ -32,6 +32,9 @@ def cria_tudo():
             if '.sql' in file:
                 files.append(os.path.join(r, file)) 
 
+    files.sort()
+    print(files)
+
     for f in files:
         print(f)
         with open(f, 'rb') as script:
