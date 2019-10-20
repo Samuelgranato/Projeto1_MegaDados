@@ -47,6 +47,10 @@ class TestProjeto(unittest.TestCase):
 
         adiciona_usuario(conn, usuario)
 
+        id = acha_usuario(conn, usuario)
+        self.assertIsNotNone(id)
+
+
     def test_adiciona_passaro(self):
         conn = self.__class__.connection
 
@@ -60,7 +64,7 @@ class TestProjeto(unittest.TestCase):
 
 def run_sql_script(filename):
     global config
-    with open(filename, 'rb') as f:
+    with open('./sql/' + filename, 'rb') as f:
         subprocess.run(
             [
                 config['MYSQL'], 
@@ -72,12 +76,12 @@ def run_sql_script(filename):
         )
 
 def setUpModule():
-    filenames = ['./sql/script_001.sql', './sql/script_002.sql']
+    filenames = [entry for entry in os.listdir('./sql') ]
     for filename in filenames:
         run_sql_script(filename)
 
 def tearDownModule():
-    run_sql_script('tear_down.sql')
+    run_sql_script('../tear_down.sql')
 
 if __name__ == '__main__':
     global config
