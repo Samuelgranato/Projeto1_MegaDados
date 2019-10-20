@@ -75,24 +75,20 @@ def adiciona_cidade(connection,nome):
     cur = connection.cursor()
     cur.execute("INSERT INTO cidade (nome) VALUES (%s)",(nome))
 
-def acha_cidade(connection,idcidade):
+def get_nome_cidade(connection,idcidade):
     cur = connection.cursor()
-    cur.execute("SELECT * FROM cidade WHERE idcidade = %s",('0'))
+    cur.execute("SELECT * FROM cidade WHERE idcidade = %s",(idcidade))
 
     c = cur.fetchall()
 
     for i in c:
         return i[1]
-
-
-
-
+    
 
 def adiciona_post(connection,post):
     cur = connection.cursor()
     cur.execute("INSERT INTO post (user_iduser_p,titulo,texto,url) VALUES (%s,%s,%s,%s)",(post['id'],post['titulo'],post['texto'],post['url']))
  
-
 def apaga_post(connection,idpost):
     cur = connection.cursor()
     cur.execute("UPDATE post SET is_active=0 WHERE idpost = %s",(idpost))
@@ -100,7 +96,6 @@ def apaga_post(connection,idpost):
 def ativa_post(connection,idpost):
     cur = connection.cursor()
     cur.execute("UPDATE post SET is_active=1 WHERE idpost = %s",(idpost))
-
 
 def lista_usuarios(conn):
     with conn.cursor() as cursor:
@@ -112,7 +107,6 @@ def lista_usuarios(conn):
 def gera_log(connection,log):
     cur = connection.cursor()
     cur.execute("INSERT INTO log (user_iduser_l,os,browser,ip,criado_ts) VALUES (%s,%s,%s,%s,%s)",(log["user_iduser_l"],log["os"],log["browser"],log["ip"],log["criado_ts"])) 
-    
 
 def adiciona_passaro(conn, passaro):
     with conn.cursor() as cursor:
@@ -121,4 +115,20 @@ def adiciona_passaro(conn, passaro):
         except pymysql.err.IntegrityError as e:
             raise ValueError(f'Não posso inserir {passaro["especie"]} na tabela user')
 
+def acha_passaro(conn, especie):
+    with conn.cursor() as cursor:
+        cursor.execute('SELECT * FROM passaro WHERE especie = %s ', (especie))
+        res = cursor.fetchone()
+        if res:
+            return res[0]
+        else:
+            return None
 
+def acha_post(connection,post):
+    cur = connection.cursor()
+    cur.execute("SELECT * FROM post WHERE user_iduser_p = %s AND titulo = %s AND texto = %s AND url = %s ",(post['user_iduser_p'],post['titulo'],post['texto'],post['url']))
+     
+    c = cur.fetchall()
+
+    for i in c:
+        return i[0]
