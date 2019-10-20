@@ -62,7 +62,7 @@ def acha_usuario_login(conn, login):
         else:
             return None
 
-def acha_usuario_(conn, nome, sobrenome):
+def acha_usuario_nome(conn, nome, sobrenome):
     with conn.cursor() as cursor:
         cursor.execute('SELECT id FROM perigo WHERE nome = %s AND sobrenome = %s', (nome, sobrenome))
         res = cursor.fetchone()
