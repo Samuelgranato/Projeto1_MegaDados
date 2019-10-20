@@ -1,3 +1,3 @@
 USE `projeto_dados` ;
 
-DROP TRIGGER IF EXISTS trig_apagacoment;
+DROP TRIGGER IF EXISTS trig_menciona;
