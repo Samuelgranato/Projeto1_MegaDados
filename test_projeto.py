@@ -425,7 +425,65 @@ class TestProjeto(unittest.TestCase):
         received = list_received_mencao(conn,usuario3['login'])
         self.assertEqual(received,expected)
 
+    def test_tabela_cruzada(self):
+        conn = self.__class__.connection 
 
+        usuario = {
+            'nome':'logger',
+            'login': 'logger',
+            'sobrenome':'lima',
+            'email':'logger@al.insper.edu.br',
+            'cidade_idcidade':'1'
+        }
+        adiciona_usuario(conn, usuario)
+        id_user = acha_usuario_login(conn, usuario['login'])
+
+
+        log1 = {
+            'user_iduser_l':id_user,
+            'os':'mac',
+            'browser':'safari',
+            'ip':'123',
+            'criado_ts': '123'
+        }  
+
+        
+        log2 = {
+            'user_iduser_l':id_user,
+            'os':'windows',
+            'browser':'chrome',
+            'ip':'123',
+            'criado_ts': '123'
+        }       
+
+        
+        log3 = {
+            'user_iduser_l':id_user,
+            'os':'windows',
+            'browser':'chrome',
+            'ip':'123',
+            'criado_ts': '123'
+        }   
+
+
+        log4 = {
+            'user_iduser_l':id_user,
+            'os':'windows',
+            'browser':'chrome',
+            'ip':'123',
+            'criado_ts': '123'
+        }                
+
+        gera_log(conn,log1)
+        gera_log(conn,log2)
+        gera_log(conn,log3)
+        gera_log(conn,log4)
+
+        expected = (('mac', 'safari', 1), ('windows', 'chrome', 3))
+
+        received = tabela_cruzado(conn)
+        
+        self.assertEqual(received,expected)
 
 
 def run_sql_script(filename):
