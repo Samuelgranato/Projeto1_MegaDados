@@ -112,20 +112,20 @@ def deleta_post(post: Post_Apaga):
     apaga_post(connection, post.id)
     return "Post deletado com sucesso"
 
-@app.get("/lista_posts")
+@app.get("/all_posts")
 def todos_posts():
     posts = lista_posts(connection)
 
     return posts
 
-@app.get("/lista_posts_desc")
+@app.get("/posts_desc")
 def todos_posts_desc():
     posts = lista_posts_desc(connection)
 
     return posts
 
 @app.get("/passaros")
-def acha_passaros():
+def procura_passaros():
 
     passaros = lista_passaros(connection)
 
@@ -142,3 +142,15 @@ def like_post(like : Likes):
 @app.get("/tabela_cruzado")
 def tabela_cruzada():
     return tabela_cruzado(connection)
+
+@app.get("/mencao/{login}")
+def lista_mencao(login: str):
+    res = list_received_mencao(connection, login)
+
+    return res 
+    
+@app.get("/url_passaro")
+def url_passaro():
+    res = list_URL_passaros(connection)
+    
+    return res

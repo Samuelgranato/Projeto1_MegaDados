@@ -181,7 +181,7 @@ def adiciona_passaro(conn, especie):
 
 
 
-def acha_passaro(conn, especie):
+def acha_passaro_especie(conn, especie):
     cursor = conn.cursor()
     cursor.execute('SELECT * FROM passaro WHERE especie = %s ', (especie))
     res = cursor.fetchone()
