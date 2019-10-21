@@ -486,6 +486,120 @@ class TestProjeto(unittest.TestCase):
         self.assertEqual(received,expected)
 
 
+    def test_usuario_popular(self):
+        conn = self.__class__.connection
+
+
+        adiciona_cidade(conn,"São Paulo")
+
+        usuario1 = {
+                'nome':'vinicius2',
+                'login': 'vinigl',
+                'sobrenome':'lima',
+                'email':'viniciu2sgl1@al.insper.edu.br',
+                'cidade_idcidade':'1'
+            }
+
+        adiciona_usuario(conn, usuario1)
+        id1 = acha_usuario_login(conn, usuario1['login'])
+
+
+        post1 = {
+            'user_iduser_p':id1,
+            'titulo':'antes',
+            'texto':'texto @famoso @dwd #pica-pau',
+            'url':'abc.com'
+        }
+
+        usuario2 = {
+            'nome':'samuel',
+            'login': 'samuelvgb',
+            'sobrenome':'lima',
+            'email':'samuel@al.insper.edu.br',
+            'cidade_idcidade':'1'
+        }
+
+        adiciona_usuario(conn, usuario2)
+        id2 = acha_usuario_login(conn, usuario2['login'])
+
+
+        post2 = {
+            'user_iduser_p':id2,
+            'titulo':'antes',
+            'texto':'texto @famoso @dwd #periquito',
+            'url':'def.com'
+        }
+
+        usuario3 = {
+            'nome':'famoso',
+            'login': 'famoso',
+            'sobrenome':'lima',
+            'email':'famoso@al.insper.edu.br',
+            'cidade_idcidade':'1'
+        }
+        adiciona_usuario(conn, usuario3)
+
+        adiciona_post(conn,post1)
+        adiciona_post(conn,post2)
+
+
+
+        expected = (1, 2)
+        received = usuario_popular(conn)
+        self.assertEqual(received,expected)
+
+
+
+    def test_lista_posts_desc(self):
+        conn = self.__class__.connection
+
+
+        
+
+        usuario1 = {
+                'nome':'vinicius2',
+                'login': 'vinigl',
+                'sobrenome':'lima',
+                'email':'viniciu2sgl1@al.insper.edu.br',
+                'cidade_idcidade':'1'
+            }
+
+        adiciona_usuario(conn, usuario1)
+        id1 = acha_usuario_login(conn, usuario1['login'])
+
+
+        post1 = {
+            'user_iduser_p':id1,
+            'titulo':'antes',
+            'texto':'texto @famoso @dwd #pica-pau',
+            'url':'abc.com'
+        }
+        post2 = {
+            'user_iduser_p':id1,
+            'titulo':'meio',
+            'texto':'texto @famoso @dwd #pica-pau',
+            'url':'abc.com'
+        }
+
+        post3 = {
+            'user_iduser_p':id1,
+            'titulo':'depois',
+            'texto':'texto @famoso @dwd #pica-pau',
+            'url':'abc.com'
+        }
+
+       
+
+        adiciona_post(conn,post1)
+        adiciona_post(conn,post2)
+        adiciona_post(conn,post3)
+
+
+
+        expected = ((11, 13, 'depois', 'texto @famoso @dwd #pica-pau', 'abc.com', 1), (10, 13, 'meio', 'texto @famoso @dwd #pica-pau', 'abc.com', 1), (9, 13, 'antes', 'texto @famoso @dwd #pica-pau', 'abc.com', 1))
+        received = lista_posts_desc(conn,id1)
+        self.assertEqual(received,expected)
+
 def run_sql_script(filename):
     global config
     with open('./sql/' + filename, 'rb') as f:

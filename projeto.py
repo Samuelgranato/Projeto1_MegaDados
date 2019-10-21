@@ -225,9 +225,9 @@ def lista_posts(connection):
 
     return c
 
-def lista_posts_desc(connection):
+def lista_posts_desc(connection,iduser):
     cur = connection.cursor()
-    cur.execute("SELECT * FROM post WHERE is_active=1 ORDER BY idpost DESC")
+    cur.execute("SELECT * FROM post WHERE is_active=1 AND user_iduser_p = %s ORDER BY idpost DESC",(iduser))
      
     c = cur.fetchall()
 
@@ -420,14 +420,17 @@ def usuario_popular(connection):
             WHERE 
                 post_menciona_user.post_idpost_mu=post.idpost 
                 AND post_menciona_user.user_iduser_mu=user.iduser 
-                AND post_menciona_post=is_active=1
+                AND post_menciona_user.is_active=1
             GROUP BY 
-                cidade.idcidade,
-                MAX(total)
+                cidade.idcidade
             
             '''
     cursor.execute(q)
+
+    res = cursor.fetchone()
     cursor.close()
+
+    return res
 
 def likes(connection, like):
     cursor = connection.cursor()
