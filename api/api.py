@@ -8,7 +8,7 @@ import datetime
 from connection import *
 os.chdir('../')
 from projeto import *
-os.chdir('api/')
+os.chdir('./api')
 
 from models import *
 
@@ -53,13 +53,13 @@ def cria_preferencia(preferencia: Preferencia):
                          preferencia.passaroid)
 
 
-@app.get("/posts")
-def acha_posts(post: Post_Acha, req: Request):
-    post_find = {
-        'user_iduser': post.iduser,
-        'titulo': post.titulo
-    }
-    resultado = acha_post(connection, post_find)
+@app.get("/posts/{idpost}")
+def acha_posts(req: Request, idpost:int):
+    # post_find = {
+    #     'titulo': post.titulo
+    # }
+    print(idpost)
+    resultado = acha_post(connection, idpost)
 
     infos = vars(req.headers)['_list']
    
@@ -70,11 +70,17 @@ def acha_posts(post: Post_Acha, req: Request):
 
         request_infos[key] = value
     
-    OS = request_infos['user-agent'].split(" ")[2]
-    
-    useful_info = {'host': request_infos['host'], 
+    print(request_infos['user-agent'].split(" "))
+    try:
+        OS = request_infos['user-agent'].split(" ")[2]
+    except:
+        OS = request_infos['user-agent'].split(" ")[0]
+
+    print(len(request_infos['user-agent']))
+    useful_info = {'user_iduser_l':1,
+                   'ip': request_infos['host'], 
                    'browser': request_infos['user-agent'], 
-                   'OS' : OS, 
+                   'os' : OS, 
                    'criado_ts': datetime.datetime.now()}
     
     gera_log(connection, useful_info)
@@ -89,7 +95,7 @@ def lista_os():
 @app.post("/posts")
 def cria_post(post: Post_Cria):
     post_cria = {
-        'id': post.iduser,
+        'user_iduser_p': post.iduser,
         'titulo': post.titulo,
         'texto': post.texto,
         'url': post.url
@@ -106,9 +112,15 @@ def deleta_post(post: Post_Apaga):
     apaga_post(connection, post.id)
     return "Post deletado com sucesso"
 
-@app.get("lista_posts")
+@app.get("/lista_posts")
 def todos_posts():
     posts = lista_posts(connection)
+
+    return posts
+
+@app.get("/lista_posts_desc")
+def todos_posts_desc():
+    posts = lista_posts_desc(connection)
 
     return posts
 
@@ -122,3 +134,7 @@ def acha_passaros():
 @app.post("/passaros")
 def cria_passaro(passaro: Passaro):
     adiciona_passaro(connection, passaro.especie)
+
+@app.put("/likes")
+def like_post(like : Likes):
+    likes(connection, like)

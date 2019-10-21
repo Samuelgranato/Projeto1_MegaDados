@@ -101,7 +101,7 @@ def ativa_post(connection,idpost):
     cur.execute("UPDATE post SET is_active=1 WHERE idpost = %s",(idpost))
 
 def lista_usuarios(conn):
-    cur = connection.cursor()
+    cur = conn.cursor()
     cursor.execute('SELECT id from user')
     res = cursor.fetchall()
     users = tuple(x[0] for x in res)
@@ -113,15 +113,15 @@ def gera_log(connection,log):
 
 
 def adiciona_passaro(conn, especie):
-    cur = connection.cursor()
+    cursor = conn.cursor()
     try:
-        cursor.execute('INSERT INTO passaro (especie) VALUES (%s)', (passaro['especie']))
+        cursor.execute('INSERT INTO passaro (especie) VALUES (%s)', (especie))
     except pymysql.err.IntegrityError as e:
         raise ValueError(f'Não posso inserir {especie} na tabela user')
 
 
 def acha_passaro(conn, especie):
-    cur = connection.cursor()
+    cursor = conn.cursor()
     cursor.execute('SELECT * FROM passaro WHERE especie = %s ', (especie))
     res = cursor.fetchone()
     if res:
@@ -129,18 +129,25 @@ def acha_passaro(conn, especie):
     else:
         return None
 
-def acha_post(connection,post):
+def acha_post(connection, post_titulo):
     cur = connection.cursor()
-    cur.execute("SELECT * FROM post WHERE user_iduser_p = %s AND titulo = %s",(post['user_iduser_p'],post['titulo']))
+    cur.execute("SELECT * FROM post WHERE titulo = %s",(post_titulo))
      
     c = cur.fetchall()
 
-    for i in c:
-        return i[0]
+    return c
 
 def lista_posts(connection):
     cur = connection.cursor()
     cur.execute("SELECT * FROM post")
+     
+    c = cur.fetchall()
+
+    return c
+
+def lista_posts_desc(connection):
+    cur = connection.cursor()
+    cur.execute("SELECT * FROM post WHERE is_active=1 ORDER BY idpost DESC")
      
     c = cur.fetchall()
 
@@ -206,7 +213,7 @@ def atualiza_preferencia(connection, preferencia, usuario_id, passaro_id):
     
 def os_popular(connection):
     cur = connection.cursor()
-    cur.execute("SELECT os, count(os) as total FROM logs GROUP BY os")
+    cur.execute("SELECT os, count(os) as total FROM log GROUP BY os")
     resultado = cur.fetchall()
     cur.close()
 
@@ -228,4 +235,18 @@ def usuario_popular(connection):
             
             '''
     cursor.execute(q)
+    cursor.close()
+
+def likes(connection, like):
+    cursor = connection.cursor()
+    q = '''UPDATE 
+                post_likes
+            SET 
+                curtida=%s
+            WHERE
+                idpost=%s 
+                AND iduser=%s
+            
+            '''
+    cursor.execute(q, (like.like, like.idpost, like.iduser))
     cursor.close()
