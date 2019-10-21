@@ -99,7 +99,7 @@ class TestProjeto(unittest.TestCase):
 
         adiciona_post(conn,post)
 
-        idpost = acha_post(conn,post)
+        idpost = acha_post_bypost(conn,post)
         self.assertIsNotNone(idpost)
 
 
@@ -127,7 +127,7 @@ class TestProjeto(unittest.TestCase):
 
         adiciona_post(conn,post)
 
-        idpost = acha_post(conn,post)
+        idpost = acha_post_bypost(conn,post)
 
 
         post = {
@@ -168,7 +168,7 @@ class TestProjeto(unittest.TestCase):
 
         adiciona_post(conn,post)
 
-        idpost = acha_post(conn,post)
+        idpost = acha_post_bypost(conn,post)
         apaga_post(conn,idpost)
 
         self.assertEqual(get_post_status(conn,idpost),0)
@@ -198,7 +198,7 @@ class TestProjeto(unittest.TestCase):
 
         adiciona_post(conn,post)
 
-        idpost = acha_post(conn,post)
+        idpost = acha_post_bypost(conn,post)
         ativa_post(conn,idpost)
 
         self.assertEqual(get_post_status(conn,idpost),1)
@@ -263,7 +263,7 @@ class TestProjeto(unittest.TestCase):
         }
 
         adiciona_post(conn,post)
-        idpost = acha_post(conn,post)
+        idpost = acha_post_bypost(conn,post)
 
         self.assertEqual(get_curtir(conn,idpost),0)
 
