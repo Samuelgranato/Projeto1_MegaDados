@@ -138,3 +138,7 @@ def cria_passaro(passaro: Passaro):
 @app.put("/likes")
 def like_post(like : Likes):
     likes(connection, like)
+
+@app.get("/tabela_cruzado")
+def tabela_cruzada():
+    return tabela_cruzado(connection)

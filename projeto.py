@@ -219,6 +219,22 @@ def os_popular(connection):
 
     return resultado
 
+def tabela_cruzado(connection):
+    cursor = connection.cursor()
+    q = '''SELECT 
+               os, browser, COUNT(os) as total
+            FROM 
+                log
+            GROUP BY 
+                os,
+                browser
+            '''
+    cursor.execute(q)
+    r = cursor.fetchall()
+    cursor.close()
+    return r
+    
+
 def usuario_popular(connection):
     cursor = connection.cursor()
     q = '''SELECT 
