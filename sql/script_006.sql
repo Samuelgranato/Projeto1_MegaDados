@@ -1,0 +1,1 @@
+ ALTER TABLE log MODIFY browser VARCHAR(200);
