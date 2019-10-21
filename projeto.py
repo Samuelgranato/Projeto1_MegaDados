@@ -90,7 +90,7 @@ def get_nome_cidade(connection,nome_cidade):
 
 def adiciona_post(connection,post):
     cur = connection.cursor()
-    cur.execute("INSERT INTO post (user_iduser_p,titulo,texto,url) VALUES (%s,%s,%s,%s)",(post['id'],post['titulo'],post['texto'],post['url']))
+    cur.execute("INSERT INTO post (user_iduser_p,titulo,texto,url) VALUES (%s,%s,%s,%s)",(post['user_iduser_p'],post['titulo'],post['texto'],post['url']))
  
 def apaga_post(connection,idpost):
     cur = connection.cursor()
@@ -111,16 +111,16 @@ def gera_log(connection,log):
     cur = connection.cursor()
     cur.execute("INSERT INTO log (user_iduser_l,os,browser,ip,criado_ts) VALUES (%s,%s,%s,%s,%s)",(log["user_iduser_l"],log["os"],log["browser"],log["ip"],log["criado_ts"])) 
 
-def adiciona_passaro(conn, especie):
+def adiciona_passaro(conn, passaro):
     with conn.cursor() as cursor:
         try:
-            cursor.execute('INSERT INTO passaro (especie) VALUES (%s)', (especie))
+            cursor.execute('INSERT INTO passaro (especie) VALUES (%s)', (passaro['especie']))
         except pymysql.err.IntegrityError as e:
             raise ValueError(f'Não posso inserir {especie} na tabela user')
 
-def acha_passaro(conn, especie):
+def acha_passaro(conn, passaro):
     with conn.cursor() as cursor:
-        cursor.execute('SELECT * FROM passaro WHERE especie = %s ', (especie))
+        cursor.execute('SELECT * FROM passaro WHERE especie = %s ',(passaro['especie']))
         res = cursor.fetchone()
         if res:
             return res[0]
@@ -146,9 +146,52 @@ def lista_posts(connection):
 
 def lista_passaros(connection):
     cur = connection.cursor()
-    cur.execute("SELECT * FROM passaros")
+    cur.execute("SELECT * FROM passaro")
 
     c = cur.fetchall()
 
     return c
 
+
+
+def update_post(connection,idpost,post):
+    cur = connection.cursor()
+    cur.execute("UPDATE post SET titulo = %s, texto = %s, url = %s WHERE idpost = %s",(post["titulo"],post["texto"],post["url"],idpost))
+
+
+def visualiza_texto_post(connection,idpost):
+    cur = connection.cursor()
+    cur.execute("SELECT * FROM post where idpost = %s",(idpost))
+
+    c = cur.fetchall()
+
+    for i in c:
+        return i[3]
+
+def visualiza_url_post(connection,idpost):
+    cur = connection.cursor()
+    cur.execute("SELECT * FROM post where idpost = %s",(idpost))
+
+    c = cur.fetchall()
+
+    for i in c:
+        return i[4]
+
+def visualiza_titulo_post(connection,idpost):
+    cur = connection.cursor()
+    cur.execute("SELECT * FROM post where idpost = %s",(idpost))
+
+    c = cur.fetchall()
+
+    for i in c:
+        return i[2]
+
+
+def get_post_status(connection,idpost):
+    cur = connection.cursor()
+    cur.execute("SELECT * FROM post where idpost = %s",(idpost))
+
+    c = cur.fetchall()
+
+    for i in c:
+        return i[5]
