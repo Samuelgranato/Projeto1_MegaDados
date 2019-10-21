@@ -18,7 +18,6 @@ class Adiciona_Usuario(BaseModel):
 
 
 class Post_Acha(BaseModel):
-    iduser: int
     titulo: str
 
 
@@ -43,3 +42,8 @@ class Preferencia(BaseModel):
     gosta: int
     userid: int
     passaroid: int
+
+class Likes(BaseModel):
+    like: int
+    idpost: int
+    iduser: int
