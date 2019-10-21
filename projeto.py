@@ -418,11 +418,11 @@ def usuario_popular(connection):
             FROM 
                 user, post, post_menciona_user, cidade
             WHERE 
-                post_menciona_user.post_idpost_mu=user.iduser 
-                AND post_menciona_post_mu=post.idpost
-                AND post_menciona_post_mu=is_active=1
+                post_menciona_user.post_idpost_mu=post.idpost 
+                AND post_menciona_user.user_iduser_mu=user.iduser 
+                AND post_menciona_post=is_active=1
             GROUP BY 
-                cidade.idcidade
+                cidade.idcidade,
                 MAX(total)
             
             '''
