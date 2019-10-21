@@ -263,19 +263,167 @@ class TestProjeto(unittest.TestCase):
         }
 
         adiciona_post(conn,post)
-
         idpost = acha_post(conn,post)
 
+        self.assertEqual(get_curtir(conn,idpost),0)
 
-        post = {
+
+        id_usuario = acha_usuario_login(conn, usuario1['login'])
+
+        # print(idpost)
+        curtida = {
+            'iduser': id_usuario,
+            'idpost': idpost,
+            'valor' : 1
+        }
+
+        update_curtir(conn,curtida)        
+        self.assertEqual(get_curtir(conn,idpost),1)
+        update_curtir(conn,curtida)        
+        self.assertEqual(get_curtir(conn,idpost),0)
+
+
+        curtida = {
+            'iduser': id_usuario,
+            'idpost': idpost,
+            'valor' : -1
+        }
+
+
+        update_curtir(conn,curtida)        
+        self.assertEqual(get_curtir(conn,idpost),-1)
+        update_curtir(conn,curtida)        
+        self.assertEqual(get_curtir(conn,idpost),0)
+
+
+
+    def test_list_url_passaro(self):
+        conn = self.__class__.connection
+
+
+        passaro1 = {
+            'especie' : 'pica-pau'
+        }
+        
+        passaro2 = {
+            'especie' : 'periquito'
+        }
+
+        
+        adiciona_passaro(conn,passaro1)
+        adiciona_passaro(conn,passaro2)
+
+
+        usuario1 = {
+            'nome':'vinicius2',
+            'login': 'vinigl2',
+            'sobrenome':'lima',
+            'email':'viniciu2sgl1@al.insper.edu.br',
+            'cidade_idcidade':'1'
+        }
+
+        adiciona_usuario(conn, usuario1)
+        id1 = acha_usuario_login(conn, usuario1['login'])
+
+
+        post1 = {
             'user_iduser_p':id1,
-            'titulo':'mudado',
+            'titulo':'antes',
             'texto':'texto @vinigl @dwd #pica-pau',
             'url':'abc.com'
         }
 
-        update_post(conn,idpost,post)
+        usuario2 = {
+            'nome':'samuel',
+            'login': 'samuelvgb',
+            'sobrenome':'lima',
+            'email':'samuel@al.insper.edu.br',
+            'cidade_idcidade':'1'
+        }
 
+        adiciona_usuario(conn, usuario2)
+        id2 = acha_usuario_login(conn, usuario2['login'])
+
+
+        post2 = {
+            'user_iduser_p':id2,
+            'titulo':'antes',
+            'texto':'texto @vinigl @dwd #periquito',
+            'url':'def.com'
+        }
+
+
+        adiciona_post(conn,post1)
+        adiciona_post(conn,post2)
+
+
+        result = list_URL_passaros(conn)
+
+        expected = [('abc.com','pica-pau'),('def.com','periquito')]
+
+        self.assertEqual(result,expected)
+
+
+
+    def test_list_received_mencao(self):
+        conn = self.__class__.connection
+
+
+        usuario1 = {
+                'nome':'vinicius2',
+                'login': 'vinigl',
+                'sobrenome':'lima',
+                'email':'viniciu2sgl1@al.insper.edu.br',
+                'cidade_idcidade':'1'
+            }
+
+        adiciona_usuario(conn, usuario1)
+        id1 = acha_usuario_login(conn, usuario1['login'])
+
+
+        post1 = {
+            'user_iduser_p':id1,
+            'titulo':'antes',
+            'texto':'texto @famoso @dwd #pica-pau',
+            'url':'abc.com'
+        }
+
+        usuario2 = {
+            'nome':'samuel',
+            'login': 'samuelvgb',
+            'sobrenome':'lima',
+            'email':'samuel@al.insper.edu.br',
+            'cidade_idcidade':'1'
+        }
+
+        adiciona_usuario(conn, usuario2)
+        id2 = acha_usuario_login(conn, usuario2['login'])
+
+
+        post2 = {
+            'user_iduser_p':id2,
+            'titulo':'antes',
+            'texto':'texto @famoso @dwd #periquito',
+            'url':'def.com'
+        }
+
+        usuario3 = {
+            'nome':'famoso',
+            'login': 'famoso',
+            'sobrenome':'lima',
+            'email':'famoso@al.insper.edu.br',
+            'cidade_idcidade':'1'
+        }
+        adiciona_usuario(conn, usuario3)
+
+        adiciona_post(conn,post1)
+        adiciona_post(conn,post2)
+
+
+
+        expected = ['vinigl', 'samuelvgb']
+        received = list_received_mencao(conn,usuario3['login'])
+        self.assertEqual(received,expected)
 
 
 
