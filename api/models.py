@@ -1,12 +1,20 @@
 
 from pydantic import BaseModel
 
-class Usuario(BaseModel):
+class Teste(BaseModel):
+    a: str
+
+class Acha_Usuario(BaseModel):
+    nome: str
+    sobrenome: str
+    
+
+class Adiciona_Usuario(BaseModel):
     nome: str
     sobrenome: str
     email: str
     login: str
-    cidade: str
+    cidade: int
 
 
 class Post_Acha(BaseModel):
@@ -30,3 +38,8 @@ class Post_Atualiza(BaseModel):
 
 class Passaro(BaseModel):
     especie: str
+
+class Preferencia(BaseModel):
+    gosta: int
+    userid: int
+    passaroid: int

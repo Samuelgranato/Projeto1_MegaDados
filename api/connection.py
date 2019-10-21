@@ -8,6 +8,7 @@ connection = pymysql.connect(
             host=config['HOST'],
             user=config['USER'],
             password=config['PASS'],
-            database='projeto_dados'
+            database='projeto_dados',
+            autocommit=True
         )
     
