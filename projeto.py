@@ -212,3 +212,20 @@ def os_popular(connection):
 
     return resultado
 
+def usuario_popular(connection):
+    cursor = connection.cursor()
+    q = '''SELECT 
+                cidade.idcidade, COUNT(post.idpost) as total
+            FROM 
+                user, post, post_menciona_user, cidade
+            WHERE 
+                post_menciona_user.post_idpost_mu=user.iduser 
+                AND post_menciona_post_mu=post.idpost
+                AND post_menciona_post_mu=is_active=1
+            GROUP BY 
+                cidade.idcidade
+                MAX(total)
+            
+            '''
+    cursor.execute(q)
+    cursor.close()
