@@ -102,10 +102,10 @@ def ativa_post(connection,idpost):
 
 def lista_usuarios(conn):
     cur = connection.cursor()
-        cursor.execute('SELECT id from user')
-        res = cursor.fetchall()
-        users = tuple(x[0] for x in res)
-        return users
+    cursor.execute('SELECT id from user')
+    res = cursor.fetchall()
+    users = tuple(x[0] for x in res)
+    return users
 
 def gera_log(connection,log):
     cur = connection.cursor()
@@ -114,20 +114,20 @@ def gera_log(connection,log):
 
 def adiciona_passaro(conn, especie):
     cur = connection.cursor()
-        try:
-            cursor.execute('INSERT INTO passaro (especie) VALUES (%s)', (passaro['especie']))
-        except pymysql.err.IntegrityError as e:
-            raise ValueError(f'Não posso inserir {especie} na tabela user')
+    try:
+        cursor.execute('INSERT INTO passaro (especie) VALUES (%s)', (passaro['especie']))
+    except pymysql.err.IntegrityError as e:
+        raise ValueError(f'Não posso inserir {especie} na tabela user')
 
 
 def acha_passaro(conn, especie):
     cur = connection.cursor()
-        cursor.execute('SELECT * FROM passaro WHERE especie = %s ', (especie))
-        res = cursor.fetchone()
-        if res:
-            return res[0]
-        else:
-            return None
+    cursor.execute('SELECT * FROM passaro WHERE especie = %s ', (especie))
+    res = cursor.fetchone()
+    if res:
+        return res[0]
+    else:
+        return None
 
 def acha_post(connection,post):
     cur = connection.cursor()
