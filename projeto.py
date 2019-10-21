@@ -65,6 +65,15 @@ def acha_usuario_login(conn, login):
         else:
             return None
 
+def acha_usuario_id(conn, id):
+    with conn.cursor() as cursor:
+        cursor.execute('SELECT * FROM user WHERE iduser = %s ', (id))
+        res = cursor.fetchone()
+        if res:
+            return res[1]
+        else:
+            return None
+
 def acha_usuario_nome(conn, nome, sobrenome):
     cursor = conn.cursor()
     cursor.execute('SELECT * FROM user WHERE nome = %s AND sobrenome = %s', (nome, sobrenome))
@@ -91,7 +100,56 @@ def get_nome_cidade(connection,nome_cidade):
 def adiciona_post(connection,post):
     cur = connection.cursor()
     cur.execute("INSERT INTO post (user_iduser_p,titulo,texto,url) VALUES (%s,%s,%s,%s)",(post['user_iduser_p'],post['titulo'],post['texto'],post['url']))
- 
+     
+    
+    post_id = acha_post(connection,post)
+    
+    
+    
+    texto = post["texto"]
+    for palavra in texto.split(" "):
+        if("@" in palavra):
+            user_mencionado = palavra.split("@")[1]
+            
+            user_mencionado_id = acha_usuario_login(connection,user_mencionado)
+
+            if(user_mencionado_id != None):
+                try:
+
+                    cur.execute("INSERT INTO post_menciona_user (post_idpost_mu,user_iduser_mu) VALUES (%s,%s)",(post_id,user_mencionado_id))
+
+                except pymysql.err.IntegrityError as e:
+                    raise ValueError(f'Não posso inserir {user_mencionado} na tabela user')
+                
+            
+        
+        if("#" in palavra):
+            passaro_mencionado = palavra.split("#")[1]
+
+            passaro = {
+                'especie':passaro_mencionado
+            }  
+            
+            passaro_mencionado_id = acha_passaro(connection,passaro)
+            
+    
+            
+            if(passaro_mencionado_id != None):
+                try:
+                    cur.execute("INSERT INTO post_menciona_passaro (post_idpost_mp,passaro_idpassaro_mp) VALUES (%s,%s)",(post_id,passaro_mencionado_id))
+                except pymysql.err.IntegrityError as e:
+                    raise ValueError(f'Não posso inserir {passaro_mencionado} na tabela post_menciona_passaro')
+                    
+                    
+    curtida = {
+    'iduser':post['user_iduser_p'],
+    'idpost':post_id
+    }
+             
+    cria_curtir(connection,curtida)
+
+
+
 def apaga_post(connection,idpost):
     cur = connection.cursor()
     cur.execute("UPDATE post SET is_active=0 WHERE idpost = %s",(idpost))
@@ -100,38 +158,46 @@ def ativa_post(connection,idpost):
     cur = connection.cursor()
     cur.execute("UPDATE post SET is_active=1 WHERE idpost = %s",(idpost))
 
-def lista_usuarios(conn):
+def lista_usuarios(connection):
     cur = connection.cursor()
-        cursor.execute('SELECT id from user')
-        res = cursor.fetchall()
-        users = tuple(x[0] for x in res)
-        return users
+    cur.execute('SELECT id from user')
+    res = cur.fetchall()
+    users = tuple(x[0] for x in res)
+    return users
 
 def gera_log(connection,log):
     cur = connection.cursor()
     cur.execute("INSERT INTO log (user_iduser_l,os,browser,ip,criado_ts) VALUES (%s,%s,%s,%s,%s)",(log["user_iduser_l"],log["os"],log["browser"],log["ip"],log["criado_ts"])) 
 
 
-def adiciona_passaro(conn, especie):
+def adiciona_passaro(connection, passaro):
     cur = connection.cursor()
-        try:
-            cursor.execute('INSERT INTO passaro (especie) VALUES (%s)', (passaro['especie']))
-        except pymysql.err.IntegrityError as e:
-            raise ValueError(f'Não posso inserir {especie} na tabela user')
+    try:
+        cur.execute('INSERT INTO passaro (especie) VALUES (%s)', (passaro['especie']))
+    except pymysql.err.IntegrityError as e:
+        raise ValueError(f'Não posso inserir {especie} na tabela user')
 
 
-def acha_passaro(conn, especie):
+def acha_passaro(connection, passaro):
     cur = connection.cursor()
-        cursor.execute('SELECT * FROM passaro WHERE especie = %s ', (especie))
-        res = cursor.fetchone()
-        if res:
-            return res[0]
-        else:
-            return None
+    cur.execute('SELECT * FROM passaro WHERE especie = %s ', (passaro['especie']))
+    res = cur.fetchone()
+    if res:
+        return res[0]
+    else:
+        return None
 
 def acha_post(connection,post):
     cur = connection.cursor()
     cur.execute("SELECT * FROM post WHERE user_iduser_p = %s AND titulo = %s",(post['user_iduser_p'],post['titulo']))
+     
+    c = cur.fetchall()
+
+    for i in c:
+        return i[0]
+def acha_post_id(connection,idpost):
+    cur = connection.cursor()
+    cur.execute("SELECT * FROM post WHERE idpost = %s ",(idpost))
      
     c = cur.fetchall()
 
@@ -155,12 +221,18 @@ def lista_passaros(connection):
     return c
 
 
-
-
 def update_post(connection,idpost,post):
     cur = connection.cursor()
     cur.execute("UPDATE post SET titulo = %s, texto = %s, url = %s WHERE idpost = %s",(post["titulo"],post["texto"],post["url"],idpost))
 
+def acha_passaro(connection, passaro):
+    cur = connection.cursor()
+    cur.execute('SELECT * FROM passaro WHERE especie = %s ', (passaro['especie']))
+    res = cur.fetchone()
+    if res:
+        return res[0]
+    else:
+        return None
 
 def visualiza_texto_post(connection,idpost):
     cur = connection.cursor()
@@ -211,4 +283,98 @@ def os_popular(connection):
     cur.close()
 
     return resultado
+
+
+def cria_curtir(connection,curtida):
+    cur = connection.cursor()
+    cur.execute("INSERT INTO post_likes (idpost,iduser) VALUES (%s,%s)",(curtida["idpost"],curtida["iduser"]))
+ 
+def update_curtir(connection,curtida):
+    cur = connection.cursor()
+    cur.execute("UPDATE post_likes set curtida = %s WHERE idpost = %s AND iduser = %s",(curtida["valor"],curtida["idpost"],curtida["iduser"]))
+
+def get_curtir(connection,idpost):
+
+    cur = connection.cursor()
+    cur.execute("SELECT * from post_likes")
+    
+    c = cur.fetchall()
+
+    for i in c:
+        return i[2]
+
+
+def acha_post_id_ret_user(connection,idpost):
+    cur = connection.cursor()
+    cur.execute("SELECT * FROM post WHERE idpost = %s ",(idpost))
+     
+    c = cur.fetchall()
+
+    for i in c:
+        return i[1]
+
+
+def list_received_mencao(connection,login):
+    cur = connection.cursor()
+
+    id_usuario = acha_usuario_login(connection,login)
+
+    
+    cur.execute("SELECT * from post_menciona_user WHERE user_iduser_mu = %s",(id_usuario))
+    resultado = cur.fetchall()
+    cur.close()
+    
+    usuarios = []
+    
+    for mencao in resultado:
+        id_usuario_mencionou = acha_post_id_ret_user(connection,mencao[0])
+        if id_usuario_mencionou not in usuarios:
+            usuarios.append(id_usuario_mencionou)
+    
+    usuarios_login = []
+    for usuario in usuarios:
+        usuarios_login.append(acha_usuario_id(connection,usuario))
+        
+
+    return usuarios_login
+
+def list_URL_passaros(connection):
+    cur = connection.cursor()
+    cur.execute("SELECT * from post_menciona_passaro")
+    
+    c = cur.fetchall()
+
+    
+    return_values = []
+    for i in c:
+
+
+        return_values.append((acha_post_id_ret_url(connection,i[0]),acha_passaro_id(connection,i[1])))
+
+    return return_values
+
+
+def acha_post_id_ret_url(connection,idpost):
+    cur = connection.cursor()
+    cur.execute("SELECT * FROM post WHERE idpost = %s ",(idpost))
+     
+    c = cur.fetchall()
+
+    for i in c:
+        return i[4]
+    
+    
+def acha_passaro_id(connection, id):
+    cur = connection.cursor()
+    cur.execute('SELECT * FROM passaro WHERE idpassaro = %s ', (id))
+    res = cur.fetchone()
+    if res:
+        return res[1]
+    else:
+        return None
+
+
+
+
+
 
